@@ -24,6 +24,7 @@ class MatersList extends React.Component {
   }
 
   editOn(id) {
+
     return (() => {
       this.setState({ editMode: true, editMateId: id });
     });
@@ -86,15 +87,15 @@ class MatersList extends React.Component {
                   <td>{ item.age }</td>
                   <td>{ item.email }</td>
                   <td>
-                    <a onClick={ this.editOn.call(this, index) } >Edit</a>
-                    <a onClick={ this.remove.call(this, index) } >Delete</a>
+                    <a onClick={ this.editOn.call(this, index) }>Edit</a>
+                    <a onClick={ this.remove.call(this, index) }>Delete</a>
                   </td>
                 </tr>
               )
             }) }
           </tbody>
         </Table>
-        <Button onClick={ this.editOn.call(this) }>Создать</Button>
+        <Button onClick={ this.editOn.call(this, null) }>Создать</Button>
         <EditMater
           mateId={ this.state.editMateId }
           isShow={ this.state.editMode }

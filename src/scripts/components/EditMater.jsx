@@ -15,13 +15,13 @@ const initialState = {
 class EditMater extends React.Component {
   constructor() {
     super();
-    this.state = initialState;
+    this.state = { ...initialState };
   }
 
   save() {
-    const mate = Object.assign({}, this.state);
+    const mate = { ...this.state };
 
-    if (this.props.mateId) {
+    if (this.props.mateId != null) {
       MatesStore.update(this.props.mateId, mate);
     } else {
       MatesStore.create(mate);
@@ -37,7 +37,7 @@ class EditMater extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.mateId) {
+    if (nextProps.mateId != null) {
       const mate = MatesStore.db[nextProps.mateId];
 
       this.setState({
@@ -58,11 +58,10 @@ class EditMater extends React.Component {
     const hide = this.props.hide;
     const mateId = this.props.mateId;
 
-
     return (
       <Modal show={ isShow } onHide={ hide }>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Mater</Modal.Title>
+          <Modal.Title>{ mateId != null ? "Edit Mate" : "New Mate" }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form>
@@ -108,7 +107,7 @@ class EditMater extends React.Component {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={ this.save.bind(this) }>{ mateId ? "Сохранить" : "Создать" }</Button>
+          <Button onClick={ this.save.bind(this) }>{ mateId != null ? "Сохранить" : "Создать" }</Button>
           <Button onClick={ hide }>Закрыть</Button>
         </Modal.Footer>
       </Modal>
