@@ -1,0 +1,7 @@
+body .container {
+  padding: 10mm;
+}
+body .container a {
+  cursor: pointer;
+  margin: 2px;
+}
