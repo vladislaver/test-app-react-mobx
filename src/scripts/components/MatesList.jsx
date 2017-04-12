@@ -24,7 +24,6 @@ class MatersList extends React.Component {
   }
 
   editOn(id) {
-
     return (() => {
       this.setState({ editMode: true, editMateId: id });
     });

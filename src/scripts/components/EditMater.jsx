@@ -54,9 +54,7 @@ class EditMater extends React.Component {
   }
 
   render() {
-    const isShow = this.props.isShow;
-    const hide = this.props.hide;
-    const mateId = this.props.mateId;
+    const {isShow, hide, mateId} = this.props;
 
     return (
       <Modal show={ isShow } onHide={ hide }>

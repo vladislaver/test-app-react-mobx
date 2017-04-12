@@ -18,7 +18,7 @@ module.exports = {
 		filename: 'bundle.js'
 	},
 	resolve: {
-		extensions: ['.webpack.js', '.web.js', '.js', '.jsx', '.less']
+		extensions: ['.js', '.jsx', '.less']
 	},
 	module:  {
 		loaders: [
@@ -35,7 +35,7 @@ module.exports = {
         test: /\.less$/,
 				include: path.resolve(__dirname + '/src/less'),
         loader: ExtractTextPlugin.extract({
-					use: 'css-loader!less-loader'
+					use: 'css-loader' + (DEVMODE ? '?sourceMap' : "") + '!less-loader'
 				})
       }
 		]
@@ -51,8 +51,7 @@ module.exports = {
     	files: ['./public']
     }),
 		new ExtractTextPlugin({
-			filename: '../css/style.css',
-			allChunks: true
+			filename: '../css/style.css'
 		})
   ],
 	watch: DEVMODE,
