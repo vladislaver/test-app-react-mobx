@@ -30,7 +30,9 @@ class EditMater extends React.Component {
 				this.mate.lastName = mate.name.last;
 				this.mate.email = mate.email;
 				this.isMateFound = true;
-			}
+			} else {
+        this.isMateFound = false;
+      }
     } else {
 			this.isNewMate = true;
     }
