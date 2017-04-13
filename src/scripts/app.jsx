@@ -1,15 +1,13 @@
-'use strict'
+'use strict';
 
 // libs
 import React from 'react';
 import { render } from 'react-dom';
 
-import MatesList from './components/MatesList'
-import MatesStore from './store/MatesStore';
+import AppRouter from './components/AppRouter';
 
 // styles
 import '../less/style.less';
 
-MatesStore.load((db) => {
-  render (<MatesList db={ db } />, document.getElementById('app'));
-})
+render (<AppRouter />, document.getElementById('app'));
+

@@ -1,17 +1,34 @@
-'use strict'
+'use strict';
 
 import { observable } from 'mobx';
 import Guid from 'guid';
 
-function load(callback) {
-  $.get("mates.json")
-    .done((data) => {
-      this.db = observable(data);
-      (typeof callback === 'function') && callback(this.db);
-    })
-    .fail((ex) => {
-      alert("Ошибка при получении файла mates.json");
-    });
+
+function load() {
+	window.fetch('/mates.json')
+		.then((response) => {
+			return response.json();
+		})
+		.then((db) => {
+			setTimeout(() => {
+				this.db.replace(db);
+			}, 300);
+		})
+		.catch((ex) => {
+			console.error(ex);
+		});
+}
+
+function getByGuid(mateGuid) {
+	let mate = null;
+
+	this.db.forEach((item) => {
+		if (item.guid === mateGuid) {
+			mate = item;
+		}
+	});
+
+	return mate;
 }
 
 function create(newMate) {
@@ -24,14 +41,21 @@ function create(newMate) {
     },
     "email": newMate.email
   });
+
+  return true;
 }
 
-function update(id, changedMate) {
-  const mate = this.db[id];
-  mate.age = changedMate.age;
-  mate.name.first = changedMate.firstName;
-  mate.name.last = changedMate.lastName;
-  mate.email = changedMate.email;
+function update(mateGuid, changedMate) {
+  const mate = this.getByGuid(mateGuid);
+
+  if (mate) {
+		mate.age = changedMate.age;
+		mate.name.first = changedMate.firstName;
+		mate.name.last = changedMate.lastName;
+		mate.email = changedMate.email;
+
+		return true;
+	}
 }
 
 function remove(id) {
@@ -39,7 +63,9 @@ function remove(id) {
 }
 
 export default {
+	db: observable([]),
   load: load,
+	getByGuid: getByGuid,
   create: create,
   update: update,
   remove: remove

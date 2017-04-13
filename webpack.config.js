@@ -48,7 +48,8 @@ module.exports = {
 			reload: true,
 			notify: true,
 			server: ['./public'],
-    	files: ['./public']
+    	files: ['./public'],
+			ghostMode: false
     }),
 		new ExtractTextPlugin({
 			filename: '../css/style.css'

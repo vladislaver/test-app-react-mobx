@@ -1,114 +1,136 @@
-'use strict'
+'use strict';
 
 import React from 'react';
-import { Modal, Button, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+
+import { Button, FormGroup, ControlLabel, FormControl, Breadcrumb } from "react-bootstrap";
 
 import MatesStore from '../store/MatesStore';
 
-const initialState = {
-  "age": 0,
-  "firstName": "",
-  "lastName": "",
-  "email": ""
-};
-
+@observer
 class EditMater extends React.Component {
   constructor() {
     super();
-    this.state = { ...initialState };
+
+    this.mate = {
+			"age": 0,
+			"firstName": "",
+			"lastName": "",
+			"email": ""
+		};
   }
 
-  save() {
-    const mate = { ...this.state };
-
-    if (this.props.mateId != null) {
-      MatesStore.update(this.props.mateId, mate);
+  getMate() {
+    if (this.mateGuid) {
+			const mate = MatesStore.getByGuid(this.mateGuid);
+			if (mate) {
+				this.mate.age = mate.age;
+				this.mate.firstName = mate.name.first;
+				this.mate.lastName = mate.name.last;
+				this.mate.email = mate.email;
+				this.isMateFound = true;
+			}
     } else {
-      MatesStore.create(mate);
+			this.isNewMate = true;
     }
 
-    this.props.hide();
   }
 
-  handleChange(stateName) {
+	updateMate() {
+		if (MatesStore.update(this.mateGuid, this.mate)) {
+			toastr.success('Update complete', {timeOut: 2000})
+    }
+	}
+
+	createMate() {
+		if (MatesStore.create(this.mate)) {
+			toastr.success('Create complete', {timeOut: 2000})
+		}
+	}
+
+	handleChange(propertyName) {
     return ((ev) => {
-      this.setState({ [stateName]: ev.target.value });
+			this.mate[propertyName] = ev.target.value;
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.mateId != null) {
-      const mate = MatesStore.db[nextProps.mateId];
+	componentWillReceiveProps(nextProps) {
+		this.mateGuid = nextProps.match.params.id;
+		this.getMate();
+  }
 
-      this.setState({
-        "age": mate.age,
-        "firstName": mate.name.first,
-        "lastName": mate.name.last,
-        "email": mate.email
-      });
-
-      return;
-    }
-
-    this.setState(initialState);
+  componentWillMount() {
+		this.mateGuid = this.props.match.params.id;
+		this.getMate();
   }
 
   render() {
-    const {isShow, hide, mateId} = this.props;
-
     return (
-      <Modal show={ isShow } onHide={ hide }>
-        <Modal.Header closeButton>
-          <Modal.Title>{ mateId != null ? "Edit Mate" : "New Mate" }</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-            <FormGroup>
-              <ControlLabel>First Name</ControlLabel>
-              <FormControl
-                type="text"
-                label="Enter First Name"
-                value={ this.state.firstName }
-                onChange={ this.handleChange.call(this, "firstName") }
-                placeholder="First Name"
-              />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>Last Name</ControlLabel>
-              <FormControl
-                type="text"
-                label="Enter Last Name"
-                value={ this.state.lastName }
-                onChange={ this.handleChange.call(this, "lastName") }
-                placeholder="Last Name"
-              />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>Age</ControlLabel>
-              <FormControl
-                type="number"
-                label="Enter Age"
-                value={ this.state.age }
-                onChange={ this.handleChange.call(this, "age") }
-              />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>Email Address</ControlLabel>
-              <FormControl
-                type="email"
-                label="Enter Email Address"
-                value={ this.state.email }
-                onChange={ this.handleChange.call(this, "email") }
-                placeholder="Enter email"
-              />
-            </FormGroup>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={ this.save.bind(this) }>{ mateId != null ? "Сохранить" : "Создать" }</Button>
-          <Button onClick={ hide }>Закрыть</Button>
-        </Modal.Footer>
-      </Modal>
+      <div className="container">
+        {
+          (this.isMateFound || this.isNewMate) ? (
+            <form>
+              <Breadcrumb>
+                <Breadcrumb.Item href="#/">Home</Breadcrumb.Item>
+                <Breadcrumb.Item active>{ this.isNewMate ? "New Mate" : "Edit Mate" }</Breadcrumb.Item>
+              </Breadcrumb>
+              <FormGroup>
+                <ControlLabel>First Name</ControlLabel>
+                <FormControl
+                  type="text"
+                  label="Enter First Name"
+                  defaultValue={ this.mate.firstName }
+                  onChange={ this.handleChange.call(this, "firstName") }
+                  placeholder="First Name"
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Last Name</ControlLabel>
+                <FormControl
+                  type="text"
+                  label="Enter Last Name"
+                  defaultValue={ this.mate.lastName }
+                  onChange={ this.handleChange.call(this, "lastName") }
+                  placeholder="Last Name"
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Age</ControlLabel>
+                <FormControl
+                  type="number"
+                  label="Enter Age"
+                  defaultValue={ this.mate.age }
+                  onChange={ this.handleChange.call(this, "age") }
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Email Address</ControlLabel>
+                <FormControl
+                  type="email"
+                  label="Enter Email Address"
+                  defaultValue={ this.mate.email }
+                  onChange={ this.handleChange.call(this, "email") }
+                  placeholder="Enter email"
+                />
+              </FormGroup>
+              <FormGroup>
+                { this.isNewMate ? (
+                  <Button onClick={ this.createMate.bind(this) }>Создать</Button>
+                ) : (
+                  <Button onClick={ this.updateMate.bind(this) }>Сохранить</Button>
+                ) }
+              </FormGroup>
+            </form>
+          ) : (
+            <center>
+              <h2>
+                { `Mate with GUID: ${this.mateGuid} not found :(` }
+              </h2>
+            </center>
+          )
+        }
+      </div>
     );
   }
 }
