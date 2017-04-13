@@ -18,30 +18,38 @@ module.exports = {
 		filename: 'bundle.js'
 	},
 	resolve: {
-		extensions: ['.js', '.jsx', '.less']
+		extensions: [".ts", ".tsx", ".json", '.js', '.jsx', '.less']
 	},
 	module:  {
-		loaders: [
-			{
-				test: /\.jsx?$/,
-				include: path.resolve(__dirname + '/src/scripts'),
-				loader: "babel-loader",
-				query: {
-					presets: ['es2015', 'react'],
-					plugins: ["transform-decorators-legacy", "transform-object-rest-spread"]
-				}
-			},
-			{
-        test: /\.less$/,
+    rules: [
+      {
+      	test: /\.tsx?$/,
+        include: path.resolve(__dirname + '/src/scripts'),
+				loader: "awesome-typescript-loader"
+      },
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+      {
+      	test: /\.less$/,
 				include: path.resolve(__dirname + '/src/less'),
-        loader: ExtractTextPlugin.extract({
+				loader: ExtractTextPlugin.extract({
 					use: 'css-loader' + (DEVMODE ? '?sourceMap' : "") + '!less-loader'
 				})
-      }
-		]
+			}
+    ]
+		// loaders: [
+		// 	{
+		// 		test: /\.jsx?$/,
+		// 		include: path.resolve(__dirname + '/src/scripts'),
+		// 		loader: "babel-loader",
+		// 		query: {
+		// 			presets: ['es2015', 'react'],
+		// 			plugins: ["transform-decorators-legacy", "transform-object-rest-spread"]
+		// 		}
+		// 	}
+		// ]
 	},
 	plugins: [
-		new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new BrowserSyncPlugin({
       host: 'localhost',
       port: 3000,

@@ -1,10 +1,10 @@
 'use strict';
 
 // libs
-import React from 'react';
+import * as React from 'react';
 
 
-class Loader extends React.Component {
+class Loader extends React.Component<any, any> {
 
 	render(){
 		return (

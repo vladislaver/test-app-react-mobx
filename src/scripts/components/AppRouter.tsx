@@ -1,19 +1,19 @@
 'use strict';
 
 // libs
-import React from 'react';
+import * as React from 'react';
 import { observer } from 'mobx-react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
 
 import MatesList from './MatesList';
-import EditMater from './EditMater';
+import EditMater from './EditMate';
 import Loader from './Loader';
 import NotFound from './NotFound';
 
 import MatesStore from '../store/MatesStore';
 
 @observer
-class AppRouter extends React.Component {
+class AppRouter extends React.Component<any, any> {
 
 	componentWillMount() {
 		MatesStore.load();

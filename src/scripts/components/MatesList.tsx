@@ -1,38 +1,39 @@
 'use strict';
 
-import React from 'react';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button, Row, Col, FormGroup, FormControl } from "react-bootstrap";
-import { observable, action } from 'mobx';
+import { observable, action, IObservableValue } from 'mobx';
 import { observer } from 'mobx-react';
 
 import MatesStore from '../store/MatesStore';
 
 @observer
-class MatersList extends React.Component {
+class MatersList extends React.Component<any, any> {
 
-  constructor() {
-    super();
+  private filter: IObservableValue<string>
 
+  componentWillMount() {
     this.filter = observable.box("");
   }
 
+
   @action
-  search(ev) {
-		this.filter.set(ev.target.value);
+  private search = (event: React.FormEvent<HTMLInputElement>) => {
+    this.filter.set(event.currentTarget.value);
   }
 
-  remove(id) {
+  private remove = (id: string) => {
     return (() => {
       MatesStore.remove(id);
     })
   }
 
-	render() {
+  render() {
     const db = MatesStore.db;
     const filter = this.filter.get();
 
-		return (
+    return (
       <div className="container">
         <Row className="show-grid">
           <Col xs={6} md={4}>
@@ -84,8 +85,8 @@ class MatersList extends React.Component {
         </Table>
         <Link to="/new"><Button>Создать</Button></Link>
       </div>
-		)
-	}
+    )
+  }
 }
 
 export default MatersList;
