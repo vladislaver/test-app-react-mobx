@@ -110,7 +110,7 @@ export class EditMate extends React.Component<RouteComponentProps<{id: string}>,
 								<FormControl
 									type="text"
 									label="Enter Last Name"
-									defaultValue={ this.mate.name.first }
+									defaultValue={ this.mate.name.last }
 									onChange={ this.handleChange.call(this, "setLastName") }
 									placeholder="Last Name"
 								/>
