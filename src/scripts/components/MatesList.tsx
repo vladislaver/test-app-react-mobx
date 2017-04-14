@@ -2,26 +2,29 @@
 
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 import { Table, Button, Row, Col, FormGroup, FormControl } from "react-bootstrap";
-import { observable, action, IObservableValue } from 'mobx';
+import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
+
 
 import MatesStore from '../store/MatesStore';
 
 @observer
-class MatersList extends React.Component<any, any> {
+class MatersList extends React.Component<RouteComponentProps<{}>, any> {
 
-  private filter: IObservableValue<string>;
+  @observable
+  private filter: string;
 
   constructor() {
     super();
 
-    this.filter = observable.box("");
+    this.filter = "";
   }
 
   @action
   private search = (event: React.FormEvent<HTMLInputElement>) => {
-    this.filter.set(event.currentTarget.value);
+    this.filter= event.currentTarget.value;
   }
 
   private remove = (id: number) => {
@@ -34,7 +37,7 @@ class MatersList extends React.Component<any, any> {
 
   render() {
     const db = MatesStore.getList();
-    const filter = this.filter.get();
+    const filter = this.filter;
 
     return (
       <div className="container">

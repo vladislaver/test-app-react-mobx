@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { observer } from 'mobx-react';
+import { RouteComponentProps } from 'react-router';
 
 import { Button, FormGroup, ControlLabel, FormControl, Breadcrumb } from "react-bootstrap";
 
@@ -31,18 +32,13 @@ class MateWithSetters extends Mate {
 }
 
 @observer
-export class EditMate extends React.Component<any, any> {
+export class EditMate extends React.Component<RouteComponentProps<{id: string}>, any> {
 
 	private mate: MateWithSetters;
 	private mateGuid: string;
 	private isMateFound: boolean;
 	private isNewMate: boolean;
 
-	constructor() {
-	  super();
-
-
-  }
 
 	private getMate = () => {
 		if (this.mateGuid) {

@@ -2,8 +2,9 @@
 
 // libs
 import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
 
-export class NotFound extends React.Component<any, any> {
+export class NotFound extends React.Component<RouteComponentProps<{}>, any> {
 
 	render() {
 		return (

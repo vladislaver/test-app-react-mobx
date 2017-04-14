@@ -1,6 +1,6 @@
 'use strict';
 
-import { observable, IObservableArray } from 'mobx';
+import { observable } from 'mobx';
 import * as uuid  from 'uuid';
 import 'whatwg-fetch';
 import Mate from './Mate';
@@ -8,10 +8,11 @@ import Mate from './Mate';
 
 class MatesStore {
 
-  private db: IObservableArray<Mate>;
+  @observable
+  private db: Array<Mate>;
 
   constructor() {
-    this.db =  observable([]);
+    this.db =  [];
   }
 
   public load = () => {
@@ -19,15 +20,15 @@ class MatesStore {
       .then((response: any) => {
         return response.json();
       })
-      .then((db: Array<any>) => {
-        this.db.replace(db);
+      .then((db: Array<Mate>) => {
+        this.db = db;
       })
       .catch((ex: any) => {
         toastr.error(ex, "Error", { timeOut: 2000 });
       });
   };
 
-  public getList = (): IObservableArray<Mate> => {
+  public getList = (): Array<Mate> => {
     return this.db;
   };
 
