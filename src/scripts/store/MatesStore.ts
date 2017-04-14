@@ -1,72 +1,79 @@
 'use strict';
 
-import { observable } from 'mobx';
+import { observable, IObservableArray } from 'mobx';
 import * as uuid  from 'uuid';
+import 'whatwg-fetch';
+import Mate from './Mate';
 
 
-function load() {
-	window.fetch('/mates.json')
-    .then((response) => {
-			return response.json();
-		})
-    .then((db) => {
-			setTimeout(() => {
-				this.db.replace(db);
-			}, 300);
-		})
-    .catch((ex) => {
-			console.error(ex);
-		});
+class MatesStore {
+
+  private db: IObservableArray<Mate>;
+
+  constructor() {
+    this.db =  observable([]);
+  }
+
+  public load = () => {
+    fetch('/mates.json')
+      .then((response: any) => {
+        return response.json();
+      })
+      .then((db: Array<any>) => {
+        this.db.replace(db);
+      })
+      .catch((ex: any) => {
+        toastr.error(ex, "Error", { timeOut: 2000 });
+      });
+  };
+
+  public getList = (): IObservableArray<Mate> => {
+    return this.db;
+  };
+
+  public getByGuid = (guid: string): Mate  => {
+    let mate: any = null;
+
+    this.db.forEach((item: Mate) => {
+      if (item.guid === guid) {
+        mate = item;
+      }
+    });
+
+    return mate;
+  };
+
+  public create = (mate: Mate): boolean => {
+    mate.guid = uuid.v4();
+    this.db.push(mate);
+
+    return true;
+  };
+
+  public update = (guid: string, mate: Mate): boolean => {
+    const mateOld = this.getByGuid(guid);
+
+    if (mateOld) {
+      mateOld.age = mate.age;
+      mateOld.name = mate.name;
+      mateOld.email = mate.email;
+
+      return true;
+    }
+
+    return true;
+  };
+
+  public remove = (id: number): boolean => {
+    const spliced = this.db.splice(id, 1);
+
+    if (spliced.length) {
+      return true;
+    }
+
+    return false;
+  };
 }
 
-function getByGuid(mateGuid: string): any {
-	let mate = null;
 
-	this.db.forEach((item: any) => {
-		if (item.guid === mateGuid) {
-			mate = item;
-		}
-	});
-
-	return mate;
-}
-
-function create(newMate: any) {
-	this.db.push({
-		"guid": uuid.v4(),
-		"age": newMate.age,
-		"name": {
-			"first": newMate.firstName,
-			"last": newMate.lastName
-		},
-		"email": newMate.email
-	});
-
-	return true;
-}
-
-function update(mateGuid: string, changedMate: any) {
-	const mate = this.getByGuid(mateGuid);
-
-	if (mate) {
-		mate.age = changedMate.age;
-		mate.name.first = changedMate.firstName;
-		mate.name.last = changedMate.lastName;
-		mate.email = changedMate.email;
-
-		return true;
-	}
-}
-
-function remove(id: string) {
-	this.db.splice(id, 1);
-}
-
-export default {
-	db: observable([]),
-	load: load,
-	getByGuid: getByGuid,
-	create: create,
-	update: update,
-	remove: remove
-};
+export default new MatesStore();

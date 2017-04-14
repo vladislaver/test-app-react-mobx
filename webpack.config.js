@@ -11,7 +11,7 @@ const PRODMODE = NODE_ENV === 'production';
 
 module.exports = {
 	context: path.resolve(__dirname + '/src'),
-	entry:  './scripts/app',
+	entry: ['./scripts/app'],
 	output: {
 		path: path.resolve(__dirname + '/public/js'),
 		publicPath: '/js/',

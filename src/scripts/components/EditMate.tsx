@@ -6,63 +6,76 @@ import { observer } from 'mobx-react';
 import { Button, FormGroup, ControlLabel, FormControl, Breadcrumb } from "react-bootstrap";
 
 import MatesStore from '../store/MatesStore';
+import Mate from '../store/Mate';
 
 
-interface MateProps {
-	[key:string]: any;
-	age: number
-	firstName: string
-	lastName: string
-	email: string
+class MateWithSetters extends Mate {
+  constructor(mate: Mate = new Mate()) {
+    super(mate.guid, mate.age, mate.name, mate.email);
+  }
+  public setFirstName = (firstName: string):void => {
+    this.name.first = firstName;
+  };
+
+  public setLastName = (lastName: string):void => {
+    this.name.last = lastName;
+  };
+
+  public setAge = (age: number):void => {
+    this.age = age;
+  };
+
+  public setEmail = (email: string):void => {
+    this.email = email;
+  };
 }
 
 @observer
 export class EditMate extends React.Component<any, any> {
 
-	private mate: MateProps = {
-		"age": 0,
-		"firstName": "",
-		"lastName": "",
-		"email": ""
-	};
+	private mate: MateWithSetters;
 	private mateGuid: string;
-
 	private isMateFound: boolean;
-
 	private isNewMate: boolean;
+
+	constructor() {
+	  super();
+
+
+  }
 
 	private getMate = () => {
 		if (this.mateGuid) {
 			const mate = MatesStore.getByGuid(this.mateGuid);
+
 			if (mate) {
-				this.mate.age = mate.age;
-				this.mate.firstName = mate.name.first;
-				this.mate.lastName = mate.name.last;
-				this.mate.email = mate.email;
+        this.mate = new MateWithSetters(mate);
+
 				this.isMateFound = true;
 			} else {
 				this.isMateFound = false;
 			}
 		} else {
+      this.mate = new MateWithSetters();
 			this.isNewMate = true;
 		}
 	};
 
 	private updateMate = () => {
 		if (MatesStore.update(this.mateGuid, this.mate)) {
-			toastr.success('Update complete', "", {timeOut: 2000});
+			toastr.success("Mate was updated", 'Success', { timeOut: 2000 });
 		}
 	};
 
 	private createMate = () => {
 		if (MatesStore.create(this.mate)) {
-			toastr.success('Create complete', "", {timeOut: 2000})
+			toastr.success("New mate was created", 'Success', { timeOut: 2000 });
 		}
 	};
 
-	private handleChange = (propertyName: string) => {
+	private handleChange = (voidName: string) => {
 		return ((event: React.FormEvent<HTMLInputElement>) => {
-			this.mate[propertyName] = event.currentTarget.value;
+      this.mate[voidName](event.currentTarget.value);
 		});
 	};
 
@@ -91,8 +104,8 @@ export class EditMate extends React.Component<any, any> {
 								<FormControl
 									type="text"
 									label="Enter First Name"
-									defaultValue={ this.mate.firstName }
-									onChange={ this.handleChange.call(this, "firstName") }
+									defaultValue={ this.mate.name.first }
+									onChange={ this.handleChange.call(this, "setFirstName") }
 									placeholder="First Name"
 								/>
 							</FormGroup>
@@ -101,8 +114,8 @@ export class EditMate extends React.Component<any, any> {
 								<FormControl
 									type="text"
 									label="Enter Last Name"
-									defaultValue={ this.mate.lastName }
-									onChange={ this.handleChange.call(this, "lastName") }
+									defaultValue={ this.mate.name.first }
+									onChange={ this.handleChange.call(this, "setLastName") }
 									placeholder="Last Name"
 								/>
 							</FormGroup>
@@ -112,7 +125,7 @@ export class EditMate extends React.Component<any, any> {
 									type="number"
 									label="Enter Age"
 									defaultValue={ String(this.mate.age) }
-									onChange={ this.handleChange.call(this, "age") }
+									onChange={ this.handleChange.call(this, "setAge") }
 								/>
 							</FormGroup>
 							<FormGroup>
@@ -121,7 +134,7 @@ export class EditMate extends React.Component<any, any> {
 									type="email"
 									label="Enter Email Address"
 									defaultValue={ this.mate.email }
-									onChange={ this.handleChange.call(this, "email") }
+									onChange={ this.handleChange.call(this, "setEmail") }
 									placeholder="Enter email"
 								/>
 							</FormGroup>

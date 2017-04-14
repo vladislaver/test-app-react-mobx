@@ -11,26 +11,29 @@ import MatesStore from '../store/MatesStore';
 @observer
 class MatersList extends React.Component<any, any> {
 
-  private filter: IObservableValue<string>
+  private filter: IObservableValue<string>;
 
-  componentWillMount() {
+  constructor() {
+    super();
+
     this.filter = observable.box("");
   }
-
 
   @action
   private search = (event: React.FormEvent<HTMLInputElement>) => {
     this.filter.set(event.currentTarget.value);
   }
 
-  private remove = (id: string) => {
+  private remove = (id: number) => {
     return (() => {
-      MatesStore.remove(id);
+      if (MatesStore.remove(id)) {
+        toastr.success("Mate was deleted", 'Success', { timeOut: 2000 });
+      }
     })
   }
 
   render() {
-    const db = MatesStore.db;
+    const db = MatesStore.getList();
     const filter = this.filter.get();
 
     return (

@@ -21,7 +21,7 @@ class AppRouter extends React.Component<any, any> {
 
 	render() {
 		return (
-			MatesStore.db.length ? (
+			MatesStore.getList().length ? (
 				<HashRouter>
 					<Switch>
 						<Route exact path="/" component={ MatesList }/>
