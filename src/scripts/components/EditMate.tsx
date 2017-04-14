@@ -80,7 +80,7 @@ export class EditMate extends React.Component<RouteComponentProps<{id: string}>,
 		this.getMate();
 	}
 
-	componentWillReceiveProps(nextProps: any) {
+	componentWillReceiveProps(nextProps: RouteComponentProps<{id: string}) {
 		this.mateGuid = nextProps.match.params.id;
 		this.getMate();
 	}
